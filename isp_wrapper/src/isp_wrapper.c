@@ -21,11 +21,14 @@
 #include <assert.h>
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
+#include <zephyr/version.h>
 
 #include "isp_api.h"
 
 #include "imx335_isp_param_conf.h"
+#if ZEPHYR_VERSION_CODE < ZEPHYR_VERSION(4,5,0)
 #include "zephyr/drivers/video-controls.h"
+#endif
 #include "zephyr/drivers/video.h"
 #include "zephyr/drivers/video/stm32_dcmipp.h"
 
