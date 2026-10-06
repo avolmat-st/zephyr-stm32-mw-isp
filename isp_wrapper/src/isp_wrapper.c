@@ -47,6 +47,7 @@ static struct k_sem isp_sem;
 #define IMX335_HEIGHT             1944
 #define IMX335_GAIN_MIN           (0 * 1000)
 #define IMX335_GAIN_MAX           (72 * 1000)
+#define IMX335_AGAIN_MAX          (30 * 1000)
 #define IMX335_EXPOSURE_MIN       8
 #define IMX335_EXPOSURE_MAX       33266
 
@@ -60,6 +61,7 @@ static ISP_StatusTypeDef isp_GetSensorInfo(uint32_t Instance, ISP_SensorInfoType
   info->height = IMX335_HEIGHT;
   info->gain_min = IMX335_GAIN_MIN;
   info->gain_max = IMX335_GAIN_MAX;
+  info->again_max = IMX335_AGAIN_MAX;
   info->exposure_min = IMX335_EXPOSURE_MIN;
   info->exposure_max = IMX335_EXPOSURE_MAX;
 
