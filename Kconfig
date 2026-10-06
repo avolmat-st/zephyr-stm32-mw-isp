@@ -18,3 +18,15 @@ config USE_STM32_MW_ISP
 	bool "Enable isp middleware"
 	depends on VIDEO_STM32_DCMIPP
 	select FPU
+
+if USE_STM32_MW_ISP
+
+config STM32_MW_ISP_CONF_FILE
+	string "Full path to ISP middleware conf file"
+	default "imx335_isp_param_conf.h"
+
+config STM32_MW_ISP_SENSOR_CONF_FILE
+	string "Full path to the sensor specific conf file"
+	default "imx335.h"
+
+endif # USE_STM32_MW_ISP

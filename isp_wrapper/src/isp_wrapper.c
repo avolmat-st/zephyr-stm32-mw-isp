@@ -25,7 +25,9 @@
 
 #include "isp_api.h"
 
-#include "imx335_isp_param_conf.h"
+#include CONFIG_STM32_MW_ISP_CONF_FILE
+#include CONFIG_STM32_MW_ISP_SENSOR_CONF_FILE
+
 #if ZEPHYR_VERSION_CODE < ZEPHYR_VERSION(4,5,0)
 #include "zephyr/drivers/video-controls.h"
 #endif
@@ -41,29 +43,17 @@ static struct k_thread isp_thread;
 static K_THREAD_STACK_DEFINE(isp_thread_stack, 4096);
 static struct k_sem isp_sem;
 
-#define IMX335_BAYER_PATTERN      0
-#define IMX335_COLOR_DEPTH        10
-#define IMX335_WIDTH              2592
-#define IMX335_HEIGHT             1944
-#define IMX335_GAIN_MIN           (0 * 1000)
-#define IMX335_GAIN_MAX           (72 * 1000)
-#define IMX335_AGAIN_MAX          (30 * 1000)
-#define IMX335_EXPOSURE_MIN       8
-#define IMX335_EXPOSURE_MAX       33266
-
-#define IMX335_1H_PERIOD_USEC (1000000.0F / 4500 / 30)
-
 static ISP_StatusTypeDef isp_GetSensorInfo(uint32_t Instance, ISP_SensorInfoTypeDef *info)
 {
-  info->bayer_pattern = IMX335_BAYER_PATTERN;
-  info->color_depth = IMX335_COLOR_DEPTH;
-  info->width = IMX335_WIDTH;
-  info->height = IMX335_HEIGHT;
-  info->gain_min = IMX335_GAIN_MIN;
-  info->gain_max = IMX335_GAIN_MAX;
-  info->again_max = IMX335_AGAIN_MAX;
-  info->exposure_min = IMX335_EXPOSURE_MIN;
-  info->exposure_max = IMX335_EXPOSURE_MAX;
+  info->bayer_pattern = SENSOR_BAYER_PATTERN;
+  info->color_depth = SENSOR_COLOR_DEPTH;
+  info->width = SENSOR_WIDTH;
+  info->height = SENSOR_HEIGHT;
+  info->gain_min = SENSOR_GAIN_MIN;
+  info->gain_max = SENSOR_GAIN_MAX;
+  info->again_max = SENSOR_AGAIN_MAX;
+  info->exposure_min = SENSOR_EXPOSURE_MIN;
+  info->exposure_max = SENSOR_EXPOSURE_MAX;
 
   return 0;
 }
@@ -101,7 +91,7 @@ static ISP_StatusTypeDef isp_SetSensorExposure(uint32_t Instance, int32_t Exposu
   int ret;
 
   ctrl.id = VIDEO_CID_EXPOSURE;
-  ctrl.val = Exposure / IMX335_1H_PERIOD_USEC;
+  ctrl.val = Exposure / SENSOR_1H_PERIOD_USEC;
   ret = video_set_ctrl(sensor_i, &ctrl);
 
   return ret;
@@ -117,7 +107,7 @@ static ISP_StatusTypeDef isp_GetSensorExposure(uint32_t Instance, int32_t *Expos
   if (ret)
     return ret;
 
-  *Exposure = ctrl.val * IMX335_1H_PERIOD_USEC;
+  *Exposure = ctrl.val * SENSOR_1H_PERIOD_USEC;
 
   return 0;
 }
@@ -152,7 +142,7 @@ int stm32_dcmipp_isp_init(DCMIPP_HandleTypeDef *hdcmipp, const struct device *se
   assert(sensor);
 
   sensor_i = sensor;
-  res = ISP_Init(&isp_i, hdcmipp, 0, &isp_helpers, &ISP_IQParamCacheInit_IMX335);
+  res = ISP_Init(&isp_i, hdcmipp, 0, &isp_helpers, SENSOR_IQ_PARAM);
   if (res)
     return -res;
 
